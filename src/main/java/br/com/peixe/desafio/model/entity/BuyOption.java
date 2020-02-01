@@ -1,4 +1,4 @@
-package br.com.peixe.desafio.models.entity;
+package br.com.peixe.desafio.model.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,9 +24,12 @@ import java.time.LocalDate;
 public class BuyOption {
 
     @Id
-    @Column(name= "id_buy_option")
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_buy_option")
     private Long id;
+
+    @Column(name = "deal_id")
+    private Long dealId;
 
     @NotEmpty
     @Column(name = "title", nullable = false)
@@ -36,7 +39,6 @@ public class BuyOption {
     @Column(name = "normal_price", nullable = false)
     private Double normalPrice;
 
-    @NotNull
     @Column(name = "sale_price", nullable = false)
     private Double salePrice;
 

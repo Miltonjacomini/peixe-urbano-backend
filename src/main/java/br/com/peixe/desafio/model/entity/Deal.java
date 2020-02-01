@@ -1,4 +1,4 @@
-package br.com.peixe.desafio.models.entity;
+package br.com.peixe.desafio.model.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,6 +9,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -30,8 +31,8 @@ import java.util.List;
 public class Deal {
 
     @Id
-    @Column(name= "id_deal")
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name ="id_deal")
     private Long id;
 
     @NotEmpty
@@ -44,7 +45,7 @@ public class Deal {
 
     @NotNull
     @Column(name = "create_date", nullable = false)
-    private LocalDate createDate = LocalDate.now();
+    private LocalDate createDate;
 
     @NotNull
     @Column(name = "publish_date", nullable = false)
@@ -63,7 +64,7 @@ public class Deal {
     @Enumerated(EnumType.STRING)
     private TypeDeal type;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "deal_option",
             joinColumns = { @JoinColumn(name = "id_deal")},
             inverseJoinColumns = { @JoinColumn(name = "id_buy_option")})

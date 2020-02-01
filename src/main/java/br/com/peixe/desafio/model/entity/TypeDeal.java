@@ -1,4 +1,4 @@
-package br.com.peixe.desafio.models.entity;
+package br.com.peixe.desafio.model.entity;
 
 public enum TypeDeal {
 
