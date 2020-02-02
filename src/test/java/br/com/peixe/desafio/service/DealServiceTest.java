@@ -1,5 +1,7 @@
 package br.com.peixe.desafio.service;
 
+import br.com.peixe.desafio.model.dto.BuyOptionDTO;
+import br.com.peixe.desafio.model.dto.DealDTO;
 import br.com.peixe.desafio.model.entity.BuyOption;
 import br.com.peixe.desafio.model.entity.Deal;
 import br.com.peixe.desafio.model.entity.TypeDeal;
@@ -37,7 +39,7 @@ public class DealServiceTest {
     @Sql(scripts = "/sql/clearDB.sql", executionPhase = AFTER_TEST_METHOD, config = @SqlConfig(transactionMode = ISOLATED))
     public void shouldBeValidDeal() {
 
-        Deal deal = Deal.builder()
+        DealDTO deal = DealDTO.builder()
                 .title(faker.lorem().characters(50))
                 .createDate(LocalDate.now())
                 .publishDate(LocalDate.now())
@@ -47,7 +49,7 @@ public class DealServiceTest {
                 .type(TypeDeal.LOC)
                 .build();
 
-        Deal saved = dealService.insert(deal);
+        DealDTO saved = dealService.insert(deal);
 
         assertNotNull(saved);
         assertNotNull(saved.getId());
@@ -56,7 +58,7 @@ public class DealServiceTest {
     @Test(expected = RuntimeException.class)
     public void shouldNotValidDealPublishDateBeforeToday() {
 
-        Deal deal = Deal.builder()
+        DealDTO deal = DealDTO.builder()
                 .title(faker.lorem().characters(50))
                 .createDate(LocalDate.now())
                 .publishDate(LocalDate.now().minusDays(10))
@@ -66,7 +68,7 @@ public class DealServiceTest {
                 .type(TypeDeal.LOC)
                 .build();
 
-        Deal saved = dealService.insert(deal);
+        DealDTO saved = dealService.insert(deal);
 
         assertNotNull(saved);
         assertNotNull(saved.getId());
@@ -75,7 +77,7 @@ public class DealServiceTest {
     @Test(expected = RuntimeException.class)
     public void shouldNotValidDealEndDateAfterToday() {
 
-        Deal deal = Deal.builder()
+        DealDTO deal = DealDTO.builder()
                 .title(faker.lorem().characters(50))
                 .createDate(LocalDate.now())
                 .publishDate(LocalDate.now())
@@ -85,7 +87,7 @@ public class DealServiceTest {
                 .type(TypeDeal.LOC)
                 .build();
 
-        Deal saved = dealService.insert(deal);
+        DealDTO saved = dealService.insert(deal);
 
         assertNotNull(saved);
         assertNotNull(saved.getId());
@@ -95,7 +97,7 @@ public class DealServiceTest {
     @Sql(scripts = "/sql/clearDB.sql", executionPhase = AFTER_TEST_METHOD, config = @SqlConfig(transactionMode = ISOLATED))
     public void shouldUpdateDealWithBuyOption() {
 
-        BuyOption buyOption = BuyOption.builder()
+        BuyOptionDTO buyOption = BuyOptionDTO.builder()
                 .title(faker.lorem().characters(100))
                 .startDate(LocalDate.now())
                 .endDate(LocalDate.now().plusDays(20))
@@ -104,7 +106,7 @@ public class DealServiceTest {
                 .quantityCupom(faker.number().randomNumber())
                 .build();
 
-        Deal deal = Deal.builder()
+        DealDTO deal = DealDTO.builder()
                 .title(faker.lorem().characters(50))
                 .createDate(LocalDate.now())
                 .publishDate(LocalDate.now().plusDays(1))
@@ -114,10 +116,10 @@ public class DealServiceTest {
                 .type(TypeDeal.LOC)
                 .build();
 
-        Deal saved = dealService.insert(deal);
-        BuyOption buyOptionSaved = buyOptionService.insert(buyOption);
+        DealDTO saved = dealService.insert(deal);
+        BuyOptionDTO buyOptionSaved = buyOptionService.insert(buyOption);
 
-        Deal savedWithBuyOption = dealService.addOption(saved.getId(), buyOptionSaved);
+        DealDTO savedWithBuyOption = dealService.addOption(saved.getId(), buyOptionSaved);
 
         assertNotNull(saved);
         assertNotNull(saved.getId());
@@ -128,7 +130,7 @@ public class DealServiceTest {
     @Sql(scripts = "/sql/clearDB.sql", executionPhase = AFTER_TEST_METHOD, config = @SqlConfig(transactionMode = ISOLATED))
     public void shouldUpdateDealTotalSold() {
 
-        BuyOption buyOption = BuyOption.builder()
+        BuyOptionDTO buyOptionDTO = BuyOptionDTO.builder()
                 .title(faker.lorem().characters(100))
                 .startDate(LocalDate.now())
                 .endDate(LocalDate.now().plusDays(20))
@@ -137,7 +139,7 @@ public class DealServiceTest {
                 .quantityCupom(faker.number().randomNumber())
                 .build();
 
-        Deal deal = Deal.builder()
+        DealDTO deal = DealDTO.builder()
                 .title(faker.lorem().characters(50))
                 .createDate(LocalDate.now())
                 .publishDate(LocalDate.now().plusDays(1))
@@ -147,11 +149,11 @@ public class DealServiceTest {
                 .type(TypeDeal.LOC)
                 .build();
 
-        Deal saved = dealService.insert(deal);
-        buyOption.setDealId(saved.getId());
-        BuyOption buyOptionSaved = buyOptionService.insert(buyOption);
+        DealDTO saved = dealService.insert(deal);
+        buyOptionDTO.setDealId(saved.getId());
+        BuyOptionDTO buyOptionSaved = buyOptionService.insert(buyOptionDTO);
 
-        Deal savedWithBuyOption = dealService.addOption(saved.getId(), buyOptionSaved);
+        DealDTO savedWithBuyOption = dealService.addOption(saved.getId(), buyOptionSaved);
 
         assertNotNull(saved);
         assertNotNull(saved.getId());

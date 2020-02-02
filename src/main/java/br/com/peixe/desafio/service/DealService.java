@@ -1,5 +1,7 @@
 package br.com.peixe.desafio.service;
 
+import br.com.peixe.desafio.model.dto.BuyOptionDTO;
+import br.com.peixe.desafio.model.dto.DealDTO;
 import br.com.peixe.desafio.model.entity.BuyOption;
 import br.com.peixe.desafio.model.entity.Deal;
 import br.com.peixe.desafio.repository.DealRepository;
@@ -22,7 +24,9 @@ public class DealService {
     }
 
     @Transactional
-    public Deal insert(Deal deal) {
+    public DealDTO insert(DealDTO dealDTO) {
+
+        Deal deal = new Deal(dealDTO);
 
         if (deal.getPublishDate().isBefore(LocalDate.now()) ||
             deal.getEndDate().isBefore(LocalDate.now()) ||
@@ -30,24 +34,26 @@ public class DealService {
             throw new RuntimeException(OVER_LIMIT_PUBLISH);
         }
 
-        return dealRepository.save(deal);
+        Deal saved = dealRepository.save(deal);
+
+        return new DealDTO(saved);
     }
 
     @Transactional
-    public Deal addOption(Long id, BuyOption buyOption) {
+    public DealDTO addOption(Long id, BuyOptionDTO buyOptionDTO) {
 
         Deal deal = dealRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException(DEAL_NOT_FOUND));
 
-        deal.getBuyOptions().add(buyOption);
+        deal.getBuyOptions().add(new BuyOption(buyOptionDTO));
 
-        return dealRepository.save(deal);
+        return new DealDTO(dealRepository.save(deal));
     }
 
     @Transactional
-    public void updateTotalSold(BuyOption buyOption) {
+    public void updateTotalSold(BuyOptionDTO buyOptionDTO) {
 
-        Deal deal = findById(buyOption.getDealId());
+        Deal deal = findById(buyOptionDTO.getDealId());
         deal.setTotalSold(deal.getTotalSold()+1);
 
         dealRepository.save(deal);

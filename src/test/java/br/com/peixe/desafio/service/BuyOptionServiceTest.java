@@ -1,5 +1,7 @@
 package br.com.peixe.desafio.service;
 
+import br.com.peixe.desafio.model.dto.BuyOptionDTO;
+import br.com.peixe.desafio.model.dto.DealDTO;
 import br.com.peixe.desafio.model.entity.BuyOption;
 import br.com.peixe.desafio.model.entity.Deal;
 import br.com.peixe.desafio.model.entity.TypeDeal;
@@ -12,7 +14,9 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.text.DecimalFormat;
 import java.time.LocalDate;
+import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -38,27 +42,27 @@ public class BuyOptionServiceTest {
     @Sql(scripts = "/sql/clearDB.sql", executionPhase = AFTER_TEST_METHOD, config = @SqlConfig(transactionMode = ISOLATED))
     public void shouldCreateBuyOption() {
 
-        BuyOption buyOption = BuyOption.builder()
+        BuyOptionDTO buyOption = BuyOptionDTO.builder()
                 .title(faker.lorem().characters(100))
                 .startDate(LocalDate.now())
                 .endDate(LocalDate.now().plusDays(20))
-                .normalPrice(faker.number().randomDouble(2, 1, 10))
-                .percentageDiscount(faker.number().randomDouble(0, 1, 100))
+                .normalPrice(Double.valueOf("69.95"))
+                .percentageDiscount(Double.valueOf("0.25"))
                 .quantityCupom(faker.number().randomNumber())
                 .build();
 
-        BuyOption saved = buyOptionService.insert(buyOption);
+        BuyOptionDTO saved = buyOptionService.insert(buyOption);
 
         assertNotNull(saved);
         assertNotNull(saved.getId());
-        assertEquals(Double.valueOf(saved.getSalePrice()), Double.valueOf(buyOption.getNormalPrice() * 100 / buyOption.getPercentageDiscount()));
+        assertEquals("52,46", String.format("%.2f", saved.getSalePrice()));
     }
 
     @Test
     @Sql(scripts = "/sql/clearDB.sql", executionPhase = AFTER_TEST_METHOD, config = @SqlConfig(transactionMode = ISOLATED))
     public void shouldSaleBuyOption() {
 
-        Deal deal = Deal.builder()
+        DealDTO deal = DealDTO.builder()
                 .title(faker.lorem().characters(50))
                 .createDate(LocalDate.now())
                 .publishDate(LocalDate.now())
@@ -66,9 +70,10 @@ public class BuyOptionServiceTest {
                 .text(faker.lorem().characters(200))
                 .totalSold(Long.valueOf(0))
                 .type(TypeDeal.LOC)
+                .buyOptions(Collections.emptyList())
                 .build();
 
-        BuyOption buyOption = BuyOption.builder()
+        BuyOptionDTO buyOption = BuyOptionDTO.builder()
                 .title(faker.lorem().characters(100))
                 .startDate(LocalDate.now())
                 .endDate(LocalDate.now().plusDays(20))
@@ -77,13 +82,12 @@ public class BuyOptionServiceTest {
                 .quantityCupom(faker.number().randomNumber())
                 .build();
 
-        Deal dealSaved = dealService.insert(deal);
+        DealDTO dealSaved = dealService.insert(deal);
         buyOption.setDealId(dealSaved.getId());
 
-        BuyOption saved = buyOptionService.insert(buyOption);
+        BuyOptionDTO saved = buyOptionService.insert(buyOption);
 
         assertNotNull(saved.getId());
-
 
         buyOptionService.sellUnit(saved.getId());
 

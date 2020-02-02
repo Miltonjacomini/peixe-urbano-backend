@@ -1,5 +1,6 @@
 package br.com.peixe.desafio.model.entity;
 
+import br.com.peixe.desafio.model.dto.BuyOptionDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -58,4 +59,15 @@ public class BuyOption {
     @Column(name = "end_date", nullable = false)
     private LocalDate endDate;
 
+    public BuyOption(BuyOptionDTO buyOptionDTO) {
+        this.setId(buyOptionDTO.getId() == null ? null : buyOptionDTO.getId());
+        this.setDealId(buyOptionDTO.getDealId() == null ? null : buyOptionDTO.getDealId());
+        this.setTitle(buyOptionDTO.getTitle());
+        this.setNormalPrice(buyOptionDTO.getNormalPrice());
+        this.setSalePrice(buyOptionDTO.getSalePrice());
+        this.setPercentageDiscount(buyOptionDTO.getPercentageDiscount());
+        this.setQuantityCupom(buyOptionDTO.getQuantityCupom());
+        this.setStartDate(buyOptionDTO.getStartDate());
+        this.setEndDate(buyOptionDTO.getEndDate());
+    }
 }

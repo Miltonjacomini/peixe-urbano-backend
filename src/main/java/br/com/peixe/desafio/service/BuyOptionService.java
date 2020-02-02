@@ -1,5 +1,6 @@
 package br.com.peixe.desafio.service;
 
+import br.com.peixe.desafio.model.dto.BuyOptionDTO;
 import br.com.peixe.desafio.model.entity.BuyOption;
 import br.com.peixe.desafio.repository.BuyOptionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,13 +22,14 @@ public class BuyOptionService {
     }
 
     @Transactional
-    public BuyOption insert(BuyOption buyOption) {
+    public BuyOptionDTO insert(BuyOptionDTO buyOptionDTO) {
 
+        Double salePrice = buyOptionDTO.getSalePriceCalculated();
+        buyOptionDTO.setSalePrice(salePrice);
 
-        Double salePrice = Double.valueOf(buyOption.getNormalPrice() * 100 / buyOption.getPercentageDiscount());
-        buyOption.setSalePrice(salePrice);
+        BuyOption saved = buyOptionRepository.save(new BuyOption(buyOptionDTO));
 
-        return buyOptionRepository.save(buyOption);
+        return new BuyOptionDTO(saved);
     }
 
     @Transactional(readOnly = true)
@@ -49,6 +51,6 @@ public class BuyOptionService {
         buyOption.setQuantityCupom(buyOption.getQuantityCupom()-1);
         BuyOption saved = buyOptionRepository.save(buyOption);
 
-        dealService.updateTotalSold(saved);
+        dealService.updateTotalSold(new BuyOptionDTO(saved));
     }
 }

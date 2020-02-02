@@ -1,5 +1,6 @@
 package br.com.peixe.desafio.model.entity;
 
+import br.com.peixe.desafio.model.dto.DealDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,7 +21,11 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+
+import static java.util.stream.Collectors.toList;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -68,6 +73,19 @@ public class Deal {
     @JoinTable(name = "deal_option",
             joinColumns = { @JoinColumn(name = "id_deal")},
             inverseJoinColumns = { @JoinColumn(name = "id_buy_option")})
-    private List<BuyOption> buyOptions;
+    private List<BuyOption> buyOptions = new ArrayList<>();
+
+    public Deal(DealDTO dealDTO) {
+        this.setId(dealDTO.getId());
+        this.setCreateDate(dealDTO.getCreateDate());
+        this.setPublishDate(dealDTO.getPublishDate());
+        this.setEndDate(dealDTO.getEndDate());
+        this.setTitle(dealDTO.getTitle());
+        this.setText(dealDTO.getText());
+        this.setType(dealDTO.getType());
+        this.setTotalSold(dealDTO.getTotalSold());
+        this.setBuyOptions(dealDTO.getBuyOptions().isEmpty() ? Collections.emptyList() : dealDTO.getBuyOptions().stream().map(BuyOption::new).collect(toList()));
+        this.setUrl(dealDTO.getUrl());
+    }
 
 }
