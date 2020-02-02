@@ -5,6 +5,7 @@ import br.com.peixe.desafio.model.dto.DealDTO;
 import br.com.peixe.desafio.model.entity.BuyOption;
 import br.com.peixe.desafio.model.entity.Deal;
 import br.com.peixe.desafio.model.entity.TypeDeal;
+import br.com.peixe.desafio.repository.BuyOptionRepository;
 import com.github.javafaker.Faker;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,9 +18,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.util.Collections;
+import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 import static org.springframework.test.context.jdbc.SqlConfig.TransactionMode.ISOLATED;
 
@@ -34,6 +35,9 @@ public class BuyOptionServiceTest {
 
     @Autowired
     private BuyOptionService buyOptionService;
+
+    @Autowired
+    private BuyOptionRepository buyOptionRepository;
 
     @Autowired
     private DealService dealService;
@@ -97,5 +101,48 @@ public class BuyOptionServiceTest {
 
     }
 
+    @Test
+    @Sql(scripts = "/sql/clearDB.sql", executionPhase = AFTER_TEST_METHOD, config = @SqlConfig(transactionMode = ISOLATED))
+    public void shouldReturnAllValidDeals() {
 
+        BuyOption buyOption = BuyOption.builder()
+                .title(faker.lorem().characters(100))
+                .startDate(LocalDate.now().minusDays(2))
+                .endDate(LocalDate.now().plusDays(20))
+                .normalPrice(faker.number().randomDouble(2, 1, 10))
+                .percentageDiscount(faker.number().randomDouble(0, 1, 100))
+                .salePrice(faker.number().randomDouble(2, 1, 10))
+                .quantityCupom(faker.number().randomNumber())
+                .build();
+
+        BuyOption buyOption2 = BuyOption.builder()
+                .title(faker.lorem().characters(100))
+                .startDate(LocalDate.now().plusDays(2))
+                .endDate(LocalDate.now().plusDays(20))
+                .normalPrice(faker.number().randomDouble(2, 1, 10))
+                .percentageDiscount(faker.number().randomDouble(0, 1, 100))
+                .salePrice(faker.number().randomDouble(2, 1, 10))
+                .quantityCupom(faker.number().randomNumber())
+                .build();
+
+        BuyOption buyOption3 = BuyOption.builder()
+                .title(faker.lorem().characters(100))
+                .startDate(LocalDate.now().plusDays(2))
+                .endDate(LocalDate.now().plusDays(20))
+                .normalPrice(faker.number().randomDouble(2, 1, 10))
+                .percentageDiscount(faker.number().randomDouble(0, 1, 100))
+                .salePrice(faker.number().randomDouble(2, 1, 10))
+                .quantityCupom(0L)
+                .build();
+
+        buyOptionRepository.save(buyOption);
+        buyOptionRepository.save(buyOption2);
+        buyOptionRepository.save(buyOption3);
+
+        List<BuyOptionDTO> result = buyOptionService.findAllWithPublishDateValid();
+
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+        assertEquals(1, result.size());
+    }
 }

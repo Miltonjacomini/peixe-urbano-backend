@@ -5,6 +5,7 @@ import br.com.peixe.desafio.model.dto.DealDTO;
 import br.com.peixe.desafio.model.entity.BuyOption;
 import br.com.peixe.desafio.model.entity.Deal;
 import br.com.peixe.desafio.model.entity.TypeDeal;
+import br.com.peixe.desafio.repository.DealRepository;
 import com.github.javafaker.Faker;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,6 +16,8 @@ import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDate;
+import java.util.Collections;
+import java.util.List;
 
 import static org.junit.Assert.*;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
@@ -33,6 +36,9 @@ public class DealServiceTest {
     private DealService dealService;
 
     @Autowired
+    private DealRepository dealRepository;
+
+    @Autowired
     private BuyOptionService buyOptionService;
 
     @Test
@@ -47,6 +53,7 @@ public class DealServiceTest {
                 .text(faker.lorem().characters(200))
                 .totalSold(Long.valueOf(0))
                 .type(TypeDeal.LOC)
+                .buyOptions(Collections.emptyList())
                 .build();
 
         DealDTO saved = dealService.insert(deal);
@@ -66,6 +73,7 @@ public class DealServiceTest {
                 .text(faker.lorem().characters(200))
                 .totalSold(Long.valueOf(0))
                 .type(TypeDeal.LOC)
+                .buyOptions(Collections.emptyList())
                 .build();
 
         DealDTO saved = dealService.insert(deal);
@@ -85,6 +93,7 @@ public class DealServiceTest {
                 .text(faker.lorem().characters(200))
                 .totalSold(Long.valueOf(0))
                 .type(TypeDeal.LOC)
+                .buyOptions(Collections.emptyList())
                 .build();
 
         DealDTO saved = dealService.insert(deal);
@@ -114,6 +123,7 @@ public class DealServiceTest {
                 .text(faker.lorem().characters(200))
                 .totalSold(Long.valueOf(0))
                 .type(TypeDeal.LOC)
+                .buyOptions(Collections.emptyList())
                 .build();
 
         DealDTO saved = dealService.insert(deal);
@@ -147,6 +157,7 @@ public class DealServiceTest {
                 .text(faker.lorem().characters(200))
                 .totalSold(Long.valueOf(0))
                 .type(TypeDeal.LOC)
+                .buyOptions(Collections.emptyList())
                 .build();
 
         DealDTO saved = dealService.insert(deal);
@@ -164,5 +175,53 @@ public class DealServiceTest {
         Deal updatedTotalSold = dealService.findById(deal.getId());
 
         assertNotEquals(saved.getTotalSold(), updatedTotalSold.getTotalSold());
+    }
+
+    @Test
+    @Sql(scripts = "/sql/clearDB.sql", executionPhase = AFTER_TEST_METHOD, config = @SqlConfig(transactionMode = ISOLATED))
+    public void shouldReturnAllValidDeals() {
+
+        Deal deal = Deal.builder()
+                .title(faker.lorem().characters(50))
+                .createDate(LocalDate.now())
+                .publishDate(LocalDate.now().plusDays(2))
+                .endDate(LocalDate.now().plusDays(20))
+                .text(faker.lorem().characters(200))
+                .totalSold(Long.valueOf(0))
+                .type(TypeDeal.LOC)
+                .buyOptions(Collections.emptyList())
+                .build();
+
+        Deal deal2 = Deal.builder()
+                .title(faker.lorem().characters(50))
+                .createDate(LocalDate.now())
+                .publishDate(LocalDate.now().minusDays(2))
+                .endDate(LocalDate.now().plusDays(20))
+                .text(faker.lorem().characters(200))
+                .totalSold(Long.valueOf(0))
+                .type(TypeDeal.LOC)
+                .buyOptions(Collections.emptyList())
+                .build();
+
+        Deal deal3 = Deal.builder()
+                .title(faker.lorem().characters(50))
+                .createDate(LocalDate.now())
+                .publishDate(LocalDate.now().minusDays(10))
+                .endDate(LocalDate.now().plusDays(20))
+                .text(faker.lorem().characters(200))
+                .totalSold(Long.valueOf(0))
+                .type(TypeDeal.LOC)
+                .buyOptions(Collections.emptyList())
+                .build();
+
+        dealRepository.save(deal);
+        dealRepository.save(deal2);
+        dealRepository.save(deal3);
+
+        List<DealDTO> result = dealService.findAllWithPublishDateValid();
+
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+        assertEquals(2, result.size());
     }
 }

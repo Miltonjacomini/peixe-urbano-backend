@@ -7,6 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.util.List;
+
+import static java.util.stream.Collectors.toList;
+
 @Service
 public class BuyOptionService {
 
@@ -52,5 +57,10 @@ public class BuyOptionService {
         BuyOption saved = buyOptionRepository.save(buyOption);
 
         dealService.updateTotalSold(new BuyOptionDTO(saved));
+    }
+
+    public List<BuyOptionDTO> findAllWithPublishDateValid() {
+        return buyOptionRepository.findAllWithPublishDateValid(LocalDate.now())
+                .stream().map(BuyOptionDTO::new).collect(toList());
     }
 }

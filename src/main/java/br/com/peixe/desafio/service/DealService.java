@@ -10,6 +10,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.List;
+
+import static java.util.stream.Collectors.toList;
 
 @Service
 public class DealService {
@@ -63,5 +66,11 @@ public class DealService {
     public Deal findById(Long id) {
         return dealRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException(DEAL_NOT_FOUND));
+    }
+
+    @Transactional(readOnly = true)
+    public List<DealDTO> findAllWithPublishDateValid() {
+        return dealRepository.findAllWithPublishDateValid(LocalDate.now())
+                .stream().map(DealDTO::new).collect(toList());
     }
 }
