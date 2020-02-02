@@ -39,7 +39,7 @@ public class DealDTO {
         this.setTitle(deal.getTitle());
         this.setText(deal.getText());
         this.setType(deal.getType());
-        this.setTotalSold(deal.getTotalSold());
+        this.setTotalSold(deal.getTotalSold() == null ? 0L : deal.getTotalSold());
         this.setBuyOptions(deal.getBuyOptions().isEmpty() ? Collections.emptyList() : deal.getBuyOptions().stream().map(BuyOptionDTO::new).collect(toList()));
         this.setUrl(deal.getUrl());
     }
