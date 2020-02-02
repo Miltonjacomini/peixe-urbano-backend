@@ -4,6 +4,7 @@ import br.com.peixe.desafio.model.dto.BuyOptionDTO;
 import br.com.peixe.desafio.model.dto.DealDTO;
 import br.com.peixe.desafio.model.entity.BuyOption;
 import br.com.peixe.desafio.model.entity.Deal;
+import br.com.peixe.desafio.repository.BuyOptionRepository;
 import br.com.peixe.desafio.repository.DealRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,11 +20,14 @@ public class DealService {
 
     private static final String OVER_LIMIT_PUBLISH = "Oferta não respeita as regras de publicação";
     private static final String DEAL_NOT_FOUND = "Não foi possível localizar a oferta infomada!";
+    private static final String BUY_OPTION_NOT_FOUND = "Não foi possível localizar a opção de oferta infomada!";
 
     private final DealRepository dealRepository;
+    private final BuyOptionRepository buyOptionRepository;
 
-    @Autowired public DealService(DealRepository dealRepository) {
+    @Autowired public DealService(DealRepository dealRepository, BuyOptionRepository buyOptionRepository) {
         this.dealRepository = dealRepository;
+        this.buyOptionRepository = buyOptionRepository;
     }
 
     @Transactional
@@ -43,14 +47,21 @@ public class DealService {
     }
 
     @Transactional
-    public DealDTO addOption(Long id, BuyOptionDTO buyOptionDTO) {
+    public DealDTO addOption(Long id, Long buyOptionId) {
 
         Deal deal = dealRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException(DEAL_NOT_FOUND));
 
-        deal.getBuyOptions().add(new BuyOption(buyOptionDTO));
+        BuyOption buyOption = buyOptionRepository.findById(buyOptionId)
+                .orElseThrow(() -> new RuntimeException(BUY_OPTION_NOT_FOUND));
 
-        return new DealDTO(dealRepository.save(deal));
+        deal.getBuyOptions().add(buyOption);
+        Deal saved = dealRepository.save(deal);
+
+        buyOption.setDealId(saved.getId());
+        buyOptionRepository.save(buyOption);
+
+        return new DealDTO(saved);
     }
 
     @Transactional

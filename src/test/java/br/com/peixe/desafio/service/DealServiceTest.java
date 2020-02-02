@@ -2,7 +2,6 @@ package br.com.peixe.desafio.service;
 
 import br.com.peixe.desafio.model.dto.BuyOptionDTO;
 import br.com.peixe.desafio.model.dto.DealDTO;
-import br.com.peixe.desafio.model.entity.BuyOption;
 import br.com.peixe.desafio.model.entity.Deal;
 import br.com.peixe.desafio.model.entity.TypeDeal;
 import br.com.peixe.desafio.repository.DealRepository;
@@ -129,7 +128,7 @@ public class DealServiceTest {
         DealDTO saved = dealService.insert(deal);
         BuyOptionDTO buyOptionSaved = buyOptionService.insert(buyOption);
 
-        DealDTO savedWithBuyOption = dealService.addOption(saved.getId(), buyOptionSaved);
+        DealDTO savedWithBuyOption = dealService.addOption(saved.getId(), buyOptionSaved.getId());
 
         assertNotNull(saved);
         assertNotNull(saved.getId());
@@ -149,7 +148,7 @@ public class DealServiceTest {
                 .quantityCupom(faker.number().randomNumber())
                 .build();
 
-        DealDTO deal = DealDTO.builder()
+        DealDTO dealDTO = DealDTO.builder()
                 .title(faker.lorem().characters(50))
                 .createDate(LocalDate.now())
                 .publishDate(LocalDate.now().plusDays(1))
@@ -160,11 +159,11 @@ public class DealServiceTest {
                 .buyOptions(Collections.emptyList())
                 .build();
 
-        DealDTO saved = dealService.insert(deal);
+        DealDTO saved = dealService.insert(dealDTO);
         buyOptionDTO.setDealId(saved.getId());
         BuyOptionDTO buyOptionSaved = buyOptionService.insert(buyOptionDTO);
 
-        DealDTO savedWithBuyOption = dealService.addOption(saved.getId(), buyOptionSaved);
+        DealDTO savedWithBuyOption = dealService.addOption(saved.getId(), buyOptionSaved.getId());
 
         assertNotNull(saved);
         assertNotNull(saved.getId());
@@ -172,7 +171,7 @@ public class DealServiceTest {
 
         dealService.updateTotalSold(buyOptionSaved);
 
-        Deal updatedTotalSold = dealService.findById(deal.getId());
+        Deal updatedTotalSold = dealService.findById(saved.getId());
 
         assertNotEquals(saved.getTotalSold(), updatedTotalSold.getTotalSold());
     }

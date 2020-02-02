@@ -110,12 +110,14 @@ public class DealControllerTest {
         when(dealService.findById(eq(idDeal))).thenReturn(new Deal(dealDTO));
         when(buyOptionService.findById(eq(idDeal))).thenReturn(new BuyOption(buyOptionDTO));
 
-        mockMvc.perform(post(DealController.POST_DEAL_ADD_OPTION.replace("{dealId}", String.valueOf(idDeal)))
-                .content(objectMapper.writeValueAsString(buyOptionDTO))
+        mockMvc.perform(post(DealController.POST_DEAL_ADD_OPTION
+                                                .replace("{dealId}", String.valueOf(idDeal))
+                                                .replace("{buyOptionId}", String.valueOf(idBuyOption)))
+
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", is("Opção adicionada com sucesso!")));
 
-        verify(dealService, times(1)).addOption(eq(idDeal), eq(buyOptionDTO));
+        verify(dealService, times(1)).addOption(eq(idDeal), eq(idBuyOption));
     }
 }

@@ -1,6 +1,5 @@
 package br.com.peixe.desafio.controller;
 
-import br.com.peixe.desafio.model.dto.BuyOptionDTO;
 import br.com.peixe.desafio.model.dto.DealDTO;
 import br.com.peixe.desafio.service.DealService;
 import org.slf4j.Logger;
@@ -23,7 +22,7 @@ public class DealController {
 
     protected static final String GET_DEAL = "/deals";
     protected static final String POST_DEAL = "/deal";
-    protected static final String POST_DEAL_ADD_OPTION = "/deal/{dealId}/option";
+    protected static final String POST_DEAL_ADD_OPTION = "/deal/{dealId}/option/{buyOptionId}";
 
     private final DealService dealService;
 
@@ -48,11 +47,11 @@ public class DealController {
     }
 
     @PostMapping(POST_DEAL_ADD_OPTION)
-    public ResponseEntity addOption(@Valid @PathVariable Long dealId, @RequestBody BuyOptionDTO buyOptionDTO) {
+    public ResponseEntity addOption(@Valid @PathVariable Long dealId, @PathVariable Long buyOptionId) {
 
         logger.info("Adding option to Deal");
 
-        dealService.addOption(dealId, buyOptionDTO);
+        dealService.addOption(dealId, buyOptionId);
 
         return ResponseEntity.ok("Opção adicionada com sucesso!");
     }
