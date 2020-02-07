@@ -69,7 +69,7 @@ public class Deal {
     @Enumerated(EnumType.STRING)
     private TypeDeal type;
 
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "deal_option",
             joinColumns = { @JoinColumn(name = "id_deal")},
             inverseJoinColumns = { @JoinColumn(name = "id_buy_option")})

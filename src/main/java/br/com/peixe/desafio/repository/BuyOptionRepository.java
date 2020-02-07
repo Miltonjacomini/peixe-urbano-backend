@@ -12,6 +12,9 @@ import java.util.List;
 public interface BuyOptionRepository extends JpaRepository<BuyOption, Long> {
 
     @Query(" SELECT b FROM BuyOption b " +
-            "    WHERE b.startDate <= :today OR b.endDate <= :today AND b.quantityCupom > 0 ")
+            "    WHERE (b.startDate <= :today OR b.endDate <= :today)" +
+            "       AND b.quantityCupom > 0 " +
+            "       AND b.dealId IS NULL")
     List<BuyOption> findAllWithPublishDateValid(LocalDate today);
+
 }

@@ -7,7 +7,6 @@ import br.com.peixe.desafio.model.entity.Deal;
 import br.com.peixe.desafio.model.entity.TypeDeal;
 import br.com.peixe.desafio.service.BuyOptionService;
 import br.com.peixe.desafio.service.DealService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.javafaker.Faker;
 import org.junit.Test;
@@ -24,6 +23,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
 import java.util.Collections;
+import java.util.List;
 
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
@@ -118,6 +118,6 @@ public class DealControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", is("Opção adicionada com sucesso!")));
 
-        verify(dealService, times(1)).addOption(eq(idDeal), eq(idBuyOption));
+        verify(dealService, times(1)).addOption(eq(idDeal), eq(buyOptionDTO.getId()));
     }
 }

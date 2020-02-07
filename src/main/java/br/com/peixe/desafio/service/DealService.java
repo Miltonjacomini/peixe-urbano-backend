@@ -53,7 +53,7 @@ public class DealService {
                 .orElseThrow(() -> new RuntimeException(DEAL_NOT_FOUND));
 
         BuyOption buyOption = buyOptionRepository.findById(buyOptionId)
-                .orElseThrow(() -> new RuntimeException(BUY_OPTION_NOT_FOUND));
+                .orElseThrow(() -> new RuntimeException(BUY_OPTION_NOT_FOUND));;
 
         deal.getBuyOptions().add(buyOption);
         Deal saved = dealRepository.save(deal);
@@ -84,4 +84,6 @@ public class DealService {
         return dealRepository.findAllWithPublishDateValid(LocalDate.now())
                 .stream().map(DealDTO::new).collect(toList());
     }
+
+
 }

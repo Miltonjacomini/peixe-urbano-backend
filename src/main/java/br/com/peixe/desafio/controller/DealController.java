@@ -1,6 +1,7 @@
 package br.com.peixe.desafio.controller;
 
 import br.com.peixe.desafio.model.dto.DealDTO;
+import br.com.peixe.desafio.model.entity.TypeDeal;
 import br.com.peixe.desafio.service.DealService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +22,7 @@ public class DealController {
     private static final Logger logger = LoggerFactory.getLogger(DealController.class);
 
     protected static final String GET_DEAL = "/deals";
+    protected static final String GET_DEAL_TYPES = "/deal-types";
     protected static final String POST_DEAL = "/deal";
     protected static final String POST_DEAL_ADD_OPTION = "/deal/{dealId}/option/{buyOptionId}";
 
@@ -54,5 +56,10 @@ public class DealController {
         dealService.addOption(dealId, buyOptionId);
 
         return ResponseEntity.ok("Opção adicionada com sucesso!");
+    }
+
+    @GetMapping(GET_DEAL_TYPES)
+    public TypeDeal[] getDealTypes() {
+        return TypeDeal.values();
     }
 }
