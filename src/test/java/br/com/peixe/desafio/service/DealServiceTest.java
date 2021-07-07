@@ -224,5 +224,4 @@ public class DealServiceTest {
         assertFalse(result.isEmpty());
         assertEquals(2, result.size());
     }
-
 }
