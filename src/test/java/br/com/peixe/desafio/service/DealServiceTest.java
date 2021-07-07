@@ -41,6 +41,7 @@ public class DealServiceTest {
     @Autowired
     private BuyOptionService buyOptionService;
 
+
     @Test
     @Sql(scripts = "/sql/clearDB.sql", executionPhase = AFTER_TEST_METHOD, config = @SqlConfig(transactionMode = ISOLATED))
     public void shouldBeValidDeal() {
@@ -224,4 +225,8 @@ public class DealServiceTest {
         assertFalse(result.isEmpty());
         assertEquals(2, result.size());
     }
+
+
+
+
 }
